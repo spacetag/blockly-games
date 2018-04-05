@@ -263,6 +263,14 @@
  */
 {template .toolbox}
   <xml id="toolbox" style="display: none">
+    <category name="Pseudo" colour="#848484">
+      <block type="procedures_pseudo_callreturn">
+        <field name="NAME">Pseudocode</field>
+      </block>
+      <block type="stub">
+        <field name="NAME">stub</field>
+      </block>
+    </category>
     {if $ij.level == 10}
       <category name="{msg meaning="Games.turtle" desc="IBID"}Turtle{/msg}">
         <block type="turtle_move">

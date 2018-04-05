@@ -415,3 +415,65 @@ Blockly.Blocks['turtle_repeat_internal'] = {
 
 Blockly.JavaScript['turtle_repeat_internal'] =
     Blockly.JavaScript['controls_repeat'];
+
+Blockly.Blocks['stub'] = {
+  init: function() {
+    this.appendValueInput("unused_function_return_value")
+        .setCheck(null);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour("#8e8e8e");
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['stub'] = function(block) {
+  var value_unused_function_return_value = Blockly.JavaScript.valueToCode(block, 'unused_function_return_value', Blockly.JavaScript.ORDER_COMMA);
+  var code = value_unused_function_return_value + ';\n';
+  return code;
+};
+
+Blockly.Blocks['procedures_pseudo_callreturn'] = {
+  /**
+   * Renamable block for calling a procedure with a return value.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.appendDummyInput('TOPROW')
+        .appendField(new Blockly.FieldTextInput("pseudo_expression",
+                                                Blockly.Procedures.renameForCall), "NAME");
+    this.setOutput(true);
+    this.setColour("#8e8e8e");
+    // Tooltip is set in domToMutation.
+    this.setHelpUrl(Blockly.Msg.PROCEDURES_CALLRETURN_HELPURL);
+    this.arguments_ = [];
+    this.quarkConnections_ = {};
+    this.quarkIds_ = null;
+  },
+  getProcedureCall: Blockly.Blocks['procedures_callnoreturn'].getProcedureCall,
+  renameProcedure: Blockly.Blocks['procedures_callnoreturn'].renameProcedure,
+  setProcedureParameters_:
+      Blockly.Blocks['procedures_callnoreturn'].setProcedureParameters_,
+  updateShape_: Blockly.Blocks['procedures_callnoreturn'].updateShape_,
+  mutationToDom: Blockly.Blocks['procedures_callnoreturn'].mutationToDom,
+  domToMutation: Blockly.Blocks['procedures_callnoreturn'].domToMutation,
+  renameVar: Blockly.Blocks['procedures_callnoreturn'].renameVar,
+  onchange: Blockly.Blocks['procedures_callnoreturn'].onchange,
+  customContextMenu:
+      Blockly.Blocks['procedures_callnoreturn'].customContextMenu,
+  defType_: 'procedures_defreturn'
+};
+
+Blockly.JavaScript['procedures_pseudo_callreturn'] = function(block) {
+  // Call a procedure with a return value.
+  var funcName = Blockly.JavaScript.variableDB_.getName(
+      block.getFieldValue('NAME'), Blockly.Procedures.NAME_TYPE);
+  var args = [];
+  for (var i = 0; i < block.arguments_.length; i++) {
+    args[i] = Blockly.JavaScript.valueToCode(block, 'ARG' + i,
+        Blockly.JavaScript.ORDER_COMMA) || 'null';
+  }
+  var code = funcName + '(' + args.join(', ') + ')';
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
