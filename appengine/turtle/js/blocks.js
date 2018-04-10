@@ -573,6 +573,7 @@ Blockly.Blocks['procedures_defreturn'] = {
     this.setTooltip(Blockly.Msg.PROCEDURES_DEFRETURN_TOOLTIP);
     this.setHelpUrl(Blockly.Msg.PROCEDURES_DEFRETURN_HELPURL);
     this.arguments_ = [];
+    this.argumentVarModels_ = [];
     this.setStatements_(true);
     this.statementConnection_ = null;
   },
