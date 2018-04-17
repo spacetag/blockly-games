@@ -631,3 +631,19 @@ Blockly.JavaScript['stub'] = function(block) {
   var code = value_unused_function_return_value + ';\n';
   return code;
 };
+
+
+Blockly.Blocks['blank_expression'] = {
+  init: function() {
+    this.setOutput(true, null);
+    this.setColour("#8e8e8e");
+ this.setTooltip("");
+ this.setHelpUrl("");
+  }
+};
+
+Blockly.JavaScript['blank_expression'] = function(block) {
+  var code = 'undefined';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};

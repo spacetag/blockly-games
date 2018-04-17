@@ -264,11 +264,12 @@
 {template .toolbox}
   <xml id="toolbox" style="display: none">
     <category name="Pseudo" colour="#848484">
-      <block type="procedures_pseudo_callreturn">
-        <field name="NAME">Pseudocode</field>
-      </block>
       <block type="stub">
-        <field name="NAME">stub</field>
+        <value name="unused_function_return_value">
+          <block type="procedures_pseudo_callreturn">
+            <field name="NAME">Pseudocode</field>
+          </block>
+        </value>
       </block>
     </category>
     {if $ij.level == 10}
