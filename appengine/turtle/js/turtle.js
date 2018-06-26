@@ -945,7 +945,7 @@ Turtle.load = function() {
 
       return
       // Create empty object to hold the read block library information.
-      var blockXmlTextMap = Object.create(null);
+      /*var blockXmlTextMap = Object.create(null);
       try {
         // Parse the file to get map of block type to XML text.
         blockXmlTextMap = self.formatBlockLibraryForImport_(fileContents);
@@ -965,7 +965,7 @@ Turtle.load = function() {
       // Update the block library dropdown.
       self.blockLibraryController.populateBlockLibrary();
       // Update the exporter's block library storage.
-      self.exporter.setBlockLibraryStorage(blockLibStorage);
+      self.exporter.setBlockLibraryStorage(blockLibStorage);*/
     });
     // Read the file.
     fileReader.readAsText(file);
