@@ -123,6 +123,10 @@ Turtle.init = function() {
     BlocklyGames.bindClick('submitButton', Turtle.submitToReddit);
   }
 
+  BlocklyGames.bindClick('saveButton', Turtle.save);
+  // https://github.com/google/blockly/blob/81dcdcb287e7027450336c74a104e8438e23e364/demos/blockfactory/app_controller.js#L534
+  document.getElementById('files').addEventListener('change', Turtle.load);
+
   // Initialize the slider.
   var sliderSvg = document.getElementById('slider');
   Turtle.speedSlider = new Slider(10, 35, 130, sliderSvg);
@@ -873,4 +877,97 @@ Turtle.submitToReddit = function() {
 
   // Submit the form.
   document.getElementById('t2r_form').submit();
+};
+
+// From: https://github.com/google/blockly/blob/81dcdcb287e7027450336c74a104e8438e23e364/demos/blockfactory/factory_utils.js#L714-L733
+// (or): https://github.com/google/blockly/blob/master/demos/blockfactory/factory_utils.js#L714-L733
+/**
+ * Create a file with the given attributes and download it.
+ * @param {string} contents The contents of the file.
+ * @param {string} filename The name of the file to save to.
+ * @param {string} fileType The type of the file to save.
+ */
+Turtle.createAndDownloadFile = function(contents, filename, fileType) {
+  var data = new Blob([contents], {type: 'application/' + fileType});
+  var clickEvent = new MouseEvent("click", {
+    "view": window,
+    "bubbles": true,
+    "cancelable": false
+  });
+
+  var a = document.createElement('a');
+  a.href = window.URL.createObjectURL(data);
+  a.download = filename;
+  a.textContent = 'Download file!';
+  a.dispatchEvent(clickEvent);
+};
+
+/**
+ * Save and download blocks.
+ */
+Turtle.save = function() {
+  // Encode the XML.
+  var xml = Blockly.Xml.workspaceToDom(BlocklyGames.workspace);
+  var xmlData = Blockly.Xml.domToText(xml);
+
+  Turtle.createAndDownloadFile(xmlData, "blocks.xml", "xml")
+};
+
+/* from https://github.com/google/blockly/blob/81dcdcb287e7027450336c74a104e8438e23e364/demos/blockfactory/app_controller.js#L79-L128
+
+need to change this code to make it work*/
+
+/**
+ * Tied to the 'Import Block Library' button. Imports block library from file to
+ * Block Factory. Expects user to upload a single file of JSON mapping each
+ * block type to its XML text representation.
+ */
+Turtle.load = function() {
+  var self = this;
+  var files = document.getElementById('files');
+  // If the file list is empty, the user likely canceled in the dialog.
+  if (files.files.length > 0) {
+
+    // The input tag doesn't have the "multiple" attribute
+    // so the user can only choose 1 file.
+    var file = files.files[0];
+    var fileReader = new FileReader();
+
+    // Create a map of block type to XML text from the file when it has been
+    // read.
+    fileReader.addEventListener('load', function(event) {
+      var fileContents = event.target.result;
+
+      // https://github.com/google/blockly/blob/master/appengine/storage.js#L61-L63
+      var workspace = Blockly.getMainWorkspace();
+      var xml = Blockly.Xml.textToDom(fileContents);
+      Blockly.Xml.domToWorkspace(xml, workspace);
+
+      return
+      // Create empty object to hold the read block library information.
+      var blockXmlTextMap = Object.create(null);
+      try {
+        // Parse the file to get map of block type to XML text.
+        blockXmlTextMap = self.formatBlockLibraryForImport_(fileContents);
+      } catch (e) {
+        var message = 'Could not load your block library file.\n'
+        window.alert(message + '\nFile Name: ' + file.name);
+        return;
+      }
+
+      // Create a new block library storage object with inputted block library.
+      var blockLibStorage = new BlockLibraryStorage(
+          self.blockLibraryName, blockXmlTextMap);
+
+      // Update block library controller with the new block library
+      // storage.
+      self.blockLibraryController.setBlockLibraryStorage(blockLibStorage);
+      // Update the block library dropdown.
+      self.blockLibraryController.populateBlockLibrary();
+      // Update the exporter's block library storage.
+      self.exporter.setBlockLibraryStorage(blockLibStorage);
+    });
+    // Read the file.
+    fileReader.readAsText(file);
+  }
 };
